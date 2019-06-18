@@ -8,7 +8,7 @@ from werkzeug.wrappers import Request, Response
 
 from zah.core import router
 from zah.core.settings import Configuration
-from zah.errors import models, routes
+from zah.errors import routes
 
 
 class Zah:
