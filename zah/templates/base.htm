@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <title>{{ title }}</title>
+
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> --> -->
+    </head>
+    <body>
+        <main>
+            <div class="container">
+                {% block body %}
+                    <h2 class="section_title">{{ section_title }}</h2>
+                    <div class="card-panel">
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                            Ipsam velit explicabo totam sunt iusto tenetur deleniti 
+                            repudiandae? Eum corrupti minus perferendis iusto 
+                            reprehenderit tenetur incidunt accusantium cum optio, 
+                            excepturi inventore!
+                        </p>
+                    </div>
+                {% endblock %}
+            </div>
+        </main>
+    </body>
+</html>
