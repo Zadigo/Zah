@@ -4,7 +4,7 @@ from importlib import import_module
 
 from jinja2.environment import Environment
 from jinja2.loaders import FileSystemLoader
-from werkzeug.wrappers import Request, Response
+from werkzeug.wrappers import Request, Response, AcceptMixin
 
 from zah.core import router
 from zah.core.settings import Configuration
