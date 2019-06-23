@@ -1,5 +1,11 @@
+"""This module is the base for creating, matching or rendering routes
+for the application.
+"""
+
 class DefaultRouter:
-    """This the base class to create routes for the application
+    """This the base class to create and match routes for the application.
+    The routes are created in `routes' dictionnary` that is persistent
+    during the application's lifecycle.
     """
     def __init__(self):
         self.routes = {}
@@ -55,3 +61,26 @@ class DefaultRouter:
         if callable(view):
             return view
         raise TypeError()
+
+class RegexRouter(DefaultRouter):
+    def add_route(self, regex_path, view, name, **context):
+        """Add a REGEX route to the dictionnary of routes that will
+        be used by the application:
+
+            {
+                name: {
+                    path: ^$,
+                    view: callable(),
+                    context: {}
+                }
+            }
+        """
+        self.routes.update(
+            {
+                name: {
+                    'path': regex_path,
+                    'view': self.check_view(view),
+                    'context': context
+                }
+            }
+        )

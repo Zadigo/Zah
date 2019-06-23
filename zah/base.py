@@ -21,8 +21,6 @@ class Zah:
     def __init__(self, project_path):
         # Router class
         self.router = router.DefaultRouter()
-        # Jinja environment
-        # self.templates = Environment(loader=FileSystemLoader(self.templates_path), autoescape=True)
         # Base headers for the request
         self.headers = {}
         # Configure settings
@@ -59,22 +57,8 @@ class Zah:
         return response(environ, start_application)
 
     def register_models(self, models=[]):
-        """Register a list of models to be used with
-        the application. Model should be a module path
+        """Register a list of additional models to be used with
+        the application. Model should be a module in a directory
         such as `x.models`
         """
-        # registered_models = []
-        # if isinstance(models, str):
-        #     try:
-        #         # Import the models module
-        #         models = import_module('zah.models')
-        #     except ImportError:
-        #         raise
-        #     for name, model in models.items():
-        #         if callable(model) and issubclass(model, Model):
-        #             registered_models.append(model)
-        # else:
-        #     pass
-        
-        # return registered_models
         pass
