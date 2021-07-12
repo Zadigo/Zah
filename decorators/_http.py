@@ -19,6 +19,3 @@ def only_http_methods(*methods):
 only_GET = only_http_methods('get')
 only_POST = only_http_methods('post')
 only_SAFE = only_http_methods('get', 'head')
-
-def cache_control(func):
-    pass

@@ -4,7 +4,7 @@ from typing import Callable
 import werkzeug
 from werkzeug import exceptions
 from werkzeug.middleware.shared_data import SharedDataMiddleware
-from werkzeug.wrappers import Request, Response
+from werkzeug.wrappers import Request
 
 from zah import get_template_backend
 from zah.context import RequestContext
@@ -56,22 +56,21 @@ class BaseServer:
     }
 
     @classmethod
-    def create(cls, host='127.0.0.1', port=5000, debug=True, **kwargs):
+    def create(cls, host='127.0.0.1', port=5000, **kwargs):
         attrs = {'use_reloader': True, 'use_debugger': True} | kwargs
         instance = cls()
-        app_to_run = instance.app
-        # if debug:
-        #     app_to_run = SharedDataMiddleware(app_to_run, {'/static': None})
-        werkzeug.run_simple(host, port, app_to_run, **attrs)
+        werkzeug.run_simple(host, port, instance.app, **attrs)
 
     def _dispatch_request(self, request: Request):
         attrs = {'mimetype': 'text/html', 'headers': self.headers}
         template_to_render = get_template_backend().get_template('home.html')
-
+        
+        # Populate the context with all
+        # the necessary elements (apps...)
+        # before passing it to the template
         context = RequestContext(request)
-        # Before processing the request,
-        # match a given path for the
-        # corresponding template
+        context.populate(**self.app_descriptor.apps)
+
         if self.app_descriptor.has_router:
             router = self.app_descriptor.apps.get('router')
 
@@ -92,6 +91,11 @@ class BaseServer:
 
     def _build_request(self, environ, start_response):
         request = Request(environ)
+
+        # TODO: Load a set of middlewares
+        # that can do something to the
+        # request before it is dispatched
+
         response = self._dispatch_request(request)
         return response(environ, start_response)
 
@@ -118,9 +122,10 @@ class BaseServer:
         return view
 
 
-# server = BaseServer()
-# server.use_component(Router)
-# server.add_route('/', render('home.html'), name='home')
-# print(server._routes)
-# server.use_component(Store)
-# server.create()
+class DevelopmentServer(BaseServer):
+    @classmethod
+    def create(cls, host='127.0.0.1', port=5000, **kwargs):
+        from zah import server_configuration
+        attrs = {'use_reloader': True, 'use_debugger': True} | kwargs
+        new_instance = SharedDataMiddleware(cls.app, {'/static': server_configuration.STATIC_ROOT})
+        werkzeug.run_simple(host, port, new_instance, **attrs)

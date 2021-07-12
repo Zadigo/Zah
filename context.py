@@ -8,6 +8,10 @@ class Context(dict):
     def __str__(self):
         return str(self.base_context)
 
+    def populate(self, **kwargs):
+        for key, value in kwargs.items():
+            self.setdefault(key, value)
+
 
 class RequestContext(Context):
     def __init__(self, request: Request, **kwargs):
