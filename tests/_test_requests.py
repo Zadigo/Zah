@@ -1,8 +1,8 @@
-from web.router import Router
-from web.server import BaseServer
-from web.urls import render, render_page
+from zah.router import Router
+from zah.server import BaseServer
+from zah.urls import render, render_page
 from werkzeug.test import create_environ
-from web.decorators import only_GET
+from zah.decorators import only_GET
 from werkzeug.wrappers import Request
 
 environ = create_environ('/home', 'http://127.0.0.1:5000')
