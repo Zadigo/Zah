@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Home - Zineb{% endblock %}
+{% block container %}
+    <v-row>
+        <v-col cols="8" class="offset-md-2">
+            <v-card class="pa-2">
+                <v-card-title>
+                    <h3>Welcome to Zineb management system</h1>
+                </v-card-title>
+                <v-card-text>
+                    Some text here
+                </v-card-text>
+            </v-card>
+        </v-col>
+    
+        <v-col cols="8" class="offset-md-2">
+            {% include "includes/stepper.html" %}
+        </v-col>
+
+        <v-col cols="8" class="offset-md-2">
+            <v-card class="pa-2">
+                <v-text-field label="Search" placeholder="Search spiders" solo></v-text-field>
+                <v-btn>Create a spider</v-btn>
+            </v-card>
+        </v-col>
+    </v-row>
+{% endblock %}
