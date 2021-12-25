@@ -13,6 +13,7 @@ from zah.responses import HTTP404, HttpResponse
 from zah.router.app import Router
 from zah.settings import settings
 
+
 class AppOptions:
     """Represents all the options and applications/
     components that are available within the project"""
@@ -146,10 +147,3 @@ class DevelopmentServer(BaseServer):
         attrs = {'use_reloader': True, 'use_debugger': True} | kwargs
         new_instance = SharedDataMiddleware(cls.app, {'/static': server_configuration.STATIC_ROOT})
         werkzeug.run_simple(host, port, new_instance, **attrs)
-
-
-def start_project(application, **kwargs):
-    thread = Thread(target=application, kwargs=kwargs, name='zah_web_application')
-    # thread.daemon = True
-    thread.start()
-    return True
