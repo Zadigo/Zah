@@ -17,7 +17,6 @@ server.create()
 
 The `create` method will create a new instance of the BaseServer class and pass it through Werkzeug.
 
-
 ## Starting a project
 
 ### Using applications
@@ -91,7 +90,7 @@ server.add_route('/', home, name='home')
 
 A final and more efficient way of creating multiple routes for your project can ba done by using a `urls.py` file which will be automatically loaded on project startup. The `urls.py` file requires a `patterns` attribute or it will raise an exception.
 
-```
+```python
 from zah.urls import url 
 from zah.views import home
 
