@@ -1,6 +1,7 @@
 from zah.urls import render
 from zah.views.decorators._http import only_GET, only_POST, only_SAFE
 from zah.views.decorators._cache import cache_page, never_cache
+from zah.responses import HttpResponseBadRequest
 
 def home(request, **kwargs):
     return render(request, 'home.html')
@@ -29,3 +30,7 @@ def home4(request, **kwargs):
 @cache_page
 def home5(request, **kwargs):
     return render(request, 'home.html')
+
+
+def simple_view(request, **kwargs):
+    return HttpResponseBadRequest('This is an error')

@@ -3,6 +3,9 @@ from zah.utils.iteration import keep_while
 
 
 class AppRegistry:
+    """Stores the apps that are requied for
+    the given project"""
+    
     registry = set()
     
     def __repr__(self):
@@ -22,7 +25,6 @@ class AppRegistry:
             _, instance, _ = candidate
             return instance
         raise KeyError('App does not exist')
-    
 
 
 apps = AppRegistry()
