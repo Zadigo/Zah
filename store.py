@@ -1,25 +1,27 @@
 from functools import wraps
 from asyncio import run
-from collections import OrderedDict, deque
+from collections import OrderedDict, defaultdict, deque
 
 def mutation(func):
     @wraps(func)
-    def method(self, *arg, **kwargs):
-        return func()
+    def method(self, *args, **kwargs):
+        return func(self, *args, **kwargs)
     return method
 
 
 def action(func):
-    async def method(self, *arg, **kwargs):
-        return func()
+    async def method(self, *args, **kwargs):
+        return func(self, *args, **kwargs)
     result = run(method)
+    return result
     
+
 
 class BaseModule:
     namespaced = False
 
     def __init__(self, **kwargs):
-        self.state = deque()
+        self.state = defaultdict(set)
         self.root_methods = kwargs.get('methods', {})
 
     def __call__(self, **kwargs):
@@ -30,36 +32,41 @@ class BaseStore(type):
     def __new__(cls, name, bases, attrs):
         new_class = super().__new__
         registered_modules = attrs.get('modules', [])
-        if registered_modules:
-            namespaced_modules = [
-                (module.__name__.lower(), module()) for module in registered_modules 
-                    if module.namespaced
-            ]
-            global_modules = [
-                (module.__name__.lower(), module) for module in registered_modules
-                    if not module.namespaced
-            ]
+
+        for key, value in attrs.items():
+            if not callable(value) or isinstance(value, (list, tuple, str)):
+                attrs.setdefault('_fields', key, value)
+    
+        # if registered_modules:
+        #     namespaced_modules = [
+        #         (module.__name__.lower(), module()) for module in registered_modules 
+        #             if module.namespaced
+        #     ]
+        #     global_modules = [
+        #         (module.__name__.lower(), module) for module in registered_modules
+        #             if not module.namespaced
+        #     ]
 
 
-            new_class = new_class(cls, name, bases, attrs)
-            module_objects = {
-                'private': OrderedDict(namespaced_modules),
-                'public': OrderedDict(global_modules)
-            }
-            # We need to reiterate the global 
-            # modules because they will be
-            # receiving all the other modules
-            for _, module in global_modules:
-                module.root_methods = module_objects
+        #     new_class = new_class(cls, name, bases, attrs)
+        #     module_objects = {
+        #         'private': OrderedDict(namespaced_modules),
+        #         'public': OrderedDict(global_modules)
+        #     }
+        #     # We need to reiterate the global 
+        #     # modules because they will be
+        #     # receiving all the other modules
+        #     for _, module in global_modules:
+        #         module.root_methods = module_objects
 
-            setattr(new_class, '_modules',  OrderedDict(**module_objects))
-            return new_class
+        #     setattr(new_class, '_modules',  OrderedDict(**module_objects))
+        #     return new_class
         return new_class(cls, name, bases, attrs)
 
 
 class Store(metaclass=BaseStore):
+    verbose_name = 'store'
     modules = []
-    state = []
     history = deque()
 
     def get_module(self, name, namespaced=False) -> BaseModule:
@@ -68,10 +75,16 @@ class Store(metaclass=BaseStore):
 
 
 
+class MyStore(Store):
+    products = []
+
+    @mutation
+    def some_function(self, *args, **kwargs):
+        self.products.append('Something')
 
 
-
-
+# store = MyStore()
+# store.some_function(something='Great')
 
 # class SomeModule(BaseModule):
 #     def add_another_value(self):

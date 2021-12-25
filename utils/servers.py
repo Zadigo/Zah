@@ -1,19 +1,22 @@
 from collections import OrderedDict
+from functools import wraps
+from threading import Thread
 from typing import Callable
 
 import werkzeug
 from werkzeug import exceptions
 from werkzeug.middleware.shared_data import SharedDataMiddleware
 from werkzeug.wrappers import Request
-
 from zah import get_template_backend
 from zah.context import RequestContext
 from zah.responses import HTTP404, HttpResponse
-from zah.router import Router
-from zah.store import Store
+from zah.router.app import Router
+from zah.settings import settings
 
-
-class Descriptor:
+class AppOptions:
+    """Represents all the options and applications/
+    components that are available within the project"""
+    
     apps = OrderedDict()
 
     def __contains__(self, name):
@@ -24,6 +27,8 @@ class Descriptor:
 
     @property
     def has_store(self):
+        from zah.store import Store
+        
         instance = self.apps.get('store', None)
         if instance is None:
             return False
@@ -37,7 +42,10 @@ class Descriptor:
         return isinstance(instance, Router)
 
     def new_app(self, app: type):
-        name = app.__name__.lower()
+        """Adds a new application or component
+        to the options"""
+        # name = app.__name__.lower()
+        name = app.verbose_name
         instance = app()
         self.apps.setdefault(name, instance)
 
@@ -47,18 +55,24 @@ class Descriptor:
 
 class BaseServer:
     _routes = []
+    _running = False
     has_router = False
 
-    app_descriptor = Descriptor()
+    app_options = AppOptions()
 
     headers = {
         'Content-Type': 'text/html; charset=utf8'
     }
+    
+    def __call__(self, **kwargs):
+        if not self._running:
+            self.create(**kwargs)
 
     @classmethod
     def create(cls, host='127.0.0.1', port=5000, **kwargs):
         attrs = {'use_reloader': True, 'use_debugger': True} | kwargs
         instance = cls()
+        instance._running = True
         werkzeug.run_simple(host, port, instance.app, **attrs)
 
     def _dispatch_request(self, request: Request):
@@ -69,10 +83,10 @@ class BaseServer:
         # the necessary elements (apps...)
         # before passing it to the template
         context = RequestContext(request)
-        context.populate(**self.app_descriptor.apps)
+        context.populate(**self.app_options.apps)
 
-        if self.app_descriptor.has_router:
-            router = self.app_descriptor.apps.get('router')
+        if self.app_options.has_router:
+            router = self.app_options.apps.get('router')
 
             candidate, candidates = router.match(request.path)
             if not candidate:
@@ -106,18 +120,21 @@ class BaseServer:
     def use_component(self, component: type):
         if not isinstance(component, type):
             raise TypeError('Component should be a type')
-        self.app_descriptor.new_app(component)
+        self.app_options.new_app(component)
 
     def add_route(self, path: str, view: Callable, name=None):
-        if not self.app_descriptor.has_router:
+        if not self.app_options.has_router:
             raise ValueError('You need to implement a router before you can implement routes')
-        router = self.app_descriptor.apps.get('router')
+        
+        router = self.app_options.apps.get('router')
         router.add_route(path, view, name)
         self._routes = router.urls
 
     def as_route(self, path: str, name: str = None):
         """A decorator that transforms a function into a route"""
         def view(func):
+            # @wraps(func)
+            # def inner(func):
             self.add_route(path, func, name)
         return view
 
@@ -129,3 +146,10 @@ class DevelopmentServer(BaseServer):
         attrs = {'use_reloader': True, 'use_debugger': True} | kwargs
         new_instance = SharedDataMiddleware(cls.app, {'/static': server_configuration.STATIC_ROOT})
         werkzeug.run_simple(host, port, new_instance, **attrs)
+
+
+def start_project(application, **kwargs):
+    thread = Thread(target=application, kwargs=kwargs, name='zah_web_application')
+    # thread.daemon = True
+    thread.start()
+    return True

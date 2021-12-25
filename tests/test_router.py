@@ -1,9 +1,10 @@
-from router import reverse_url
 import unittest
 
-from zah.router import Router
-from zah.server import BaseServer
+from zah.router.app import Router
 from zah.urls import render_page
+from zah.utils.servers import BaseServer
+
+from router.app import reverse_url
 
 server = BaseServer()
 server.use_component(Router)

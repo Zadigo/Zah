@@ -6,6 +6,7 @@ from werkzeug.wrappers import Request
 
 from zah import get_template_backend
 from zah.responses import HttpResponse
+from zah.router.shortcuts import get_default_router
 
 TEMPLATE_BACKEND = get_template_backend()
 
@@ -32,6 +33,7 @@ def render(request: Request, template: str, context: dict = {}):
 def url(path: str, view: Callable, name: str = None, namespace: str = None):
     if path.startswith('/'):
         path = path.removeprefix('/')
+        
     if not callable(view):
         raise TypeError('View should be a callable')
     config = {
@@ -40,7 +42,7 @@ def url(path: str, view: Callable, name: str = None, namespace: str = None):
         'view': view
     }
     if namespace is not None:
-        return { namespace: config }
+        return {namespace: config}
     return config
 
 
@@ -52,18 +54,3 @@ def static(root: str, path: str):
     # from web import server_configuration
     static_project_path = os.path.join(root, 'static')
     return {path: static_project_path}
-
-
-# class URLResolver:
-#     router = None
-
-#     def __call__(self, name: str) -> Union[str, None]:
-#         if self.router is None:
-#             raise ValueError('The router is not initiated')
-
-#         candidate, _ = self.router.match(route_name=name)
-#         if candidate:
-#             return candidate['path']
-#         return None
-
-# resolve = URLResolver()
