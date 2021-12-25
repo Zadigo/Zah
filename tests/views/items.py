@@ -1,6 +1,6 @@
 from zah.urls import render
-from zah.decorators._http import only_GET, only_POST, only_SAFE
-from zah.decorators._cache import cache_page, never_cache
+from zah.views.decorators._http import only_GET, only_POST, only_SAFE
+from zah.views.decorators._cache import cache_page, never_cache
 
 def home(request, **kwargs):
     return render(request, 'home.html')

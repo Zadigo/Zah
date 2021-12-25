@@ -125,6 +125,8 @@ server.add_route('/about', only_GET(render_page('about.html')))
 
 ## Applications
 
+### Router
+
 ## Database
 
 ## Commands

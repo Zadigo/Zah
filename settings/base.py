@@ -3,10 +3,13 @@ import os
 from jinja2.environment import Environment
 from jinja2.loaders import FileSystemLoader
 
+DEBUG = True
+
 # The base path for your project
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
+#
 
 APPS = [
     'zah.router.app.Router'
@@ -26,8 +29,7 @@ TEMPLATES = os.path.join(BASE_PATH, 'templates')
 # Zah searches and serves the different
 # templates
 
-TEMPLATE_BACKEND = Environment(
-    loader=FileSystemLoader(TEMPLATES), autoescape=True)
+TEMPLATE_BACKEND = Environment(loader=FileSystemLoader(TEMPLATES), autoescape=True)
 
 # Use this to indicate where the frontend
 # app is located so that Jinja can serve

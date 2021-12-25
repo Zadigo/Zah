@@ -1,7 +1,7 @@
 from typing import Union
 from zah.apps import apps
 
-def get_default_router():
+def get_router():
     try:
         router = apps.get_app_instance('router')
     except:

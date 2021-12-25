@@ -4,11 +4,12 @@ from typing import Callable, Union
 
 from werkzeug.wrappers import Request
 
-from zah import get_template_backend
+# from zah import get_template_backend
 from zah.responses import HttpResponse
-from zah.router.shortcuts import get_default_router
+from zah.router.shortcuts import get_router
+from zah.settings import settings
 
-TEMPLATE_BACKEND = get_template_backend()
+TEMPLATE_BACKEND = settings.TEMPLATE_BACKEND
 
 def render_page(template: str, context: dict = {}):
     """Renders an HTML page within the add_route function"""

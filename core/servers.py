@@ -1,6 +1,5 @@
 from collections import OrderedDict
 from functools import wraps
-from threading import Thread
 from typing import Callable
 
 import werkzeug
@@ -8,10 +7,10 @@ from werkzeug import exceptions
 from werkzeug.middleware.shared_data import SharedDataMiddleware
 from werkzeug.wrappers import Request
 from zah import get_template_backend
-from zah.context import RequestContext
 from zah.responses import HTTP404, HttpResponse
 from zah.router.app import Router
 from zah.settings import settings
+from zah.template.context import RequestContext
 
 
 class AppOptions:

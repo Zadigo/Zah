@@ -1,9 +1,11 @@
 from zah.router.app import Router
 # from zah.store import Store
 from zah.urls import render, render_page
-from zah.utils.servers import BaseServer, DevelopmentServer
+from zah.core.servers import BaseServer, DevelopmentServer
+from zah.shortcuts import get_default_server
 
 app = BaseServer()
+# app = get_default_server()
 app.use_component(Router)
 # app.use_component(Store)
 
