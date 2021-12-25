@@ -80,11 +80,5 @@ class Router:
         def matcher(item):
             if item['name'] is None:
                 return False
-            
-            # logic = (
-            #     item['name'] == route_name,
-            #     route_name in item['name']
-            # )
-            # return any(logic)
             return item['name'] == route_name
         return filter(matcher, self.urls)

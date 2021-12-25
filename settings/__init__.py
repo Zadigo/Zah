@@ -40,9 +40,18 @@ class Settings:
             if key.isupper():
                 setattr(self, key, value)
         
+        requires_list = ['TEMPLATES']
         user_settings = UserSettings()
         for key, value in user_settings.__dict__.items():
-            setattr(self, key, user_settings[key])
+            user_setting = user_settings[key]
+            
+            if key in requires_list:
+                if isinstance(value, list):
+                    global_setting = getattr(self, key, [])
+                    global_setting.extend(value)
+                    user_setting = global_setting
+            
+            setattr(self, key, user_setting)
         self.user_settings = user_settings
             
     def __repr__(self) -> str:

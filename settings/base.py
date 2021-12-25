@@ -23,13 +23,20 @@ STATIC_ROOT = os.path.join(BASE_PATH, 'static')
 # The default location of the templates
 # folder for your application
 
-TEMPLATES = os.path.join(BASE_PATH, 'templates')
+TEMPLATES = [
+    'D:/coding/personnal/zah/admin/templates'
+]
 
 # This is the default template backend where
 # Zah searches and serves the different
 # templates
 
+_TEMPLATES = {
+    'directories': []
+}
+
 TEMPLATE_BACKEND = Environment(loader=FileSystemLoader(TEMPLATES), autoescape=True)
+# TEMPLATE_BACKEND.list_templates()
 
 # Use this to indicate where the frontend
 # app is located so that Jinja can serve

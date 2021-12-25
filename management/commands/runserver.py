@@ -1,6 +1,7 @@
 import os
 from importlib import import_module
 
+from zah.admin.interface import admin_interface
 from zah.apps import apps
 from zah.management.base import ProjectCommand
 from zah.settings import settings
@@ -49,6 +50,13 @@ class Command(ProjectCommand):
             patterns = getattr(urls_module, 'patterns')
             for pattern in patterns:
                 router.add_route(**pattern)
+                
+        # 2. Load the default admin interface for the
+        # whole project. This requires the router to
+        # be configured so that we can integrate the
+        # admin interface urls
+        for pattern in admin_interface.urls:
+            router.add_route(**pattern)
 
         # 3. If the project requires a database,
         # configure the global database

@@ -6,8 +6,8 @@ import werkzeug
 from werkzeug import exceptions
 from werkzeug.middleware.shared_data import SharedDataMiddleware
 from werkzeug.wrappers import Request
-from zah import get_template_backend
-from zah.responses import HTTP404, HttpResponse
+from zah.template import get_template_backend
+from zah.responses import Http404, HttpResponse
 from zah.router.app import Router
 from zah.settings import settings
 from zah.template.context import RequestContext
@@ -76,21 +76,18 @@ class BaseServer:
         werkzeug.run_simple(host, port, instance.app, **attrs)
 
     def _dispatch_request(self, request: Request):
-        attrs = {'mimetype': 'text/html', 'headers': self.headers}
-        template_to_render = get_template_backend().get_template('home.html')
-        
         # Populate the context with all
         # the necessary elements (apps...)
         # before passing it to the template
         context = RequestContext(request)
-        context.populate(**self.app_options.apps)
+        context.populate(apps=self.app_options)
 
         if self.app_options.has_router:
             router = self.app_options.apps.get('router')
 
             candidate, candidates = router.match(request.path)
             if not candidate:
-                return HTTP404(response=None)
+                return Http404(response=None)
 
             view = candidate['view']
             # We receive tuple (request, template (str)) and the
@@ -101,6 +98,9 @@ class BaseServer:
             if isinstance(http_response, exceptions.HTTPException):
                 return http_response
             return http_response
+        
+        attrs = {'mimetype': 'text/html', 'headers': self.headers}
+        template_to_render = get_template_backend().get_template('index.html')
         return HttpResponse(template_to_render.render(context))
 
     def _build_request(self, environ, start_response):
