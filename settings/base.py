@@ -46,6 +46,6 @@ TEMPLATE_BACKEND = Environment(loader=FileSystemLoader(TEMPLATES), autoescape=Tr
 FRONT_END_ROOT = None
 
 DATABASE = {
-    'backend': 'sqlite',
-    'name': '',
+    'backend': 'zah.db.backends.SQLiteBackend',
+    'name': 'mydatabase',
 }
