@@ -45,3 +45,7 @@ class Http404(exceptions.NotFound):
 class JsonResponse(HttpResponse):
     def __init__(self, data):
         super().__init__(data, mimetype='application/json')
+
+
+class HttpResponseRedirect(HttpResponse):
+    status_code = 000
