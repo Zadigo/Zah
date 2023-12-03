@@ -1,5 +1,5 @@
+from zah.conf import settings
 from zah.core.servers import BaseServer, DevelopmentServer
-from zah.settings import settings
 
 
 def get_default_server():

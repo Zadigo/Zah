@@ -1,3 +1,0 @@
-const WelcomeStepper = {
-    name: "WelcomeStepper"
-}

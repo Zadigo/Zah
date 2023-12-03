@@ -1,6 +1,10 @@
-from werkzeug.wrappers import Request
-
 class Context(dict):
+    """A wrapper that passes context data
+    to the application
+
+    >>> context = Context()
+    """
+
     def __init__(self, **kwargs):
         super().update(kwargs)
         self.base_context = kwargs
@@ -14,5 +18,12 @@ class Context(dict):
 
 
 class RequestContext(Context):
-    def __init__(self, request: Request, **kwargs):
+    """A wrapper that passes context data
+    in addition to the current request
+    to a template
+
+    >>> context = RequestContext()
+    """
+
+    def __init__(self, request, **kwargs):
         super().__init__(request=request, **kwargs)

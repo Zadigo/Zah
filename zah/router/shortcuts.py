@@ -1,17 +1,17 @@
 from typing import Union
-from zah.apps import apps
+from zah.registry import registry
 
 def get_router():
     try:
-        router = apps.get_app_instance('router')
+        router = registry.get_app_instance('router')
     except:
-        from zah.router.app import Router
+        from zah.router import Router
         router = Router()
     return router
 
 
 def reverse_url(name: str) -> Union[str, None]:
-    from zah.router.app import Router
+    from zah.router import Router
     
     router = Router.copy()
     candidates = list(router.match_from_name(name))
