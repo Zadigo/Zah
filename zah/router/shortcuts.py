@@ -1,5 +1,7 @@
 from typing import Union
+
 from zah.registry import registry
+
 
 def get_router():
     try:

@@ -1,6 +1,7 @@
 from zah.core.servers import BaseServer, DevelopmentServer
 from zah.router import Router
 from zah.urls.base import render_page
+from zah.conf import settings
 
 app = BaseServer()
 app.use_component(Router)

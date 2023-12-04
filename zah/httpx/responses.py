@@ -3,13 +3,18 @@ from werkzeug.wrappers import Response
 
 
 class HttpResponse(Response):
+    """Base HTTP response used to render templates
+    strings for the application"""
+
+    default_mimetype = 'text/html'
     status_code = 200
+    description = None
     
-    def __init__(self, template_string, headers=None, mimetype='text/html'):
+    def __init__(self, template_string, headers=None):
         attrs = {
             'status': self.status_code,
             'headers': headers,
-            'mimetype': mimetype
+            'mimetype': self.default_mimetype
         }
         super().__init__(template_string, **attrs)
 
@@ -39,9 +44,12 @@ class HttpResponseServerError(HttpResponse):
 
 
 class Http404(exceptions.NotFound):
+    status_code = 404
     description = "The page you are looking for does not exist"
 
 
 class JsonResponse(HttpResponse):
-    def __init__(self, data):
-        super().__init__(data, mimetype='application/json')
+    default_mimetype = 'application/json'
+
+    def __init__(self, data, headers={}):
+        super().__init__(data, headers)

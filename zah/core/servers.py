@@ -31,20 +31,15 @@ class ApplicationOptions:
         return self.apps[name]
 
     @property
-    def has_store(self):
-        from zah.store import Store
-
-        instance = self.apps.get('store', None)
-        if instance is None:
-            return False
-        return isinstance(instance, Store)
-
-    @property
     def has_router(self):
         instance = self.apps.get('router', None)
         if instance is None:
             return False
         return isinstance(instance, Router)
+
+    @property
+    def router(self):
+        return self.apps.get('router', None)
 
     def new_component(self, component):
         """Adds a new application or component
@@ -131,12 +126,15 @@ class BaseServer(RouteMixin):
         attrs = {'use_reloader': True, 'use_debugger': True} | kwargs
         instance = cls()
         instance.is_running = True
-        registry.prepare(instance)
+        registry.populate(instance)
         werkzeug.run_simple(host, port, instance.app, **attrs)
 
-    def _dispatch_request(self, request):
-        """Dispatches the incoming request for a
-        valid HttpResponse object"""
+    def dispatch_request(self, request):
+        """Dispatches the request to the correct
+        view and returns a valid HTTP response.At this
+        point, the context for the template is initialized
+        and populated, the request, response and view function
+        are processed by the middlewares."""
 
         # Populate the context with all
         # the necessary elements (apps...)
@@ -165,18 +163,18 @@ class BaseServer(RouteMixin):
         )
         return HttpResponse(template_to_render.render(context))
 
-    def _build_request(self, environ, start_response):
-        """Constructs a Request to be disaptched in return
-        for a valid HTTPResponse object"""
+    def build_request(self, environ, start_response):
+        """Constructs a `werkzeug.Request` to be disaptched 
+        in return for a valid HTTPResponse"""
         request = Request(environ)
-        response = self._dispatch_request(request)
+        response = self.dispatch_request(request)
         return response(environ, start_response)
 
     def app(self, environ, start_response):
-        """Callable used to start the webserver and
-        continuously run the app in `werkzeug.run_simple`"""
-        registry.prepare(self)
-        return self._build_request(environ, start_response)
+        """Callable that will be continuously called by
+        `werkzeug.run_simple` and is the main entrypoint
+        for starting the webserver"""
+        return self.build_request(environ, start_response)
 
     def use_component(self, component):
         """Add a callable to the current appliation
